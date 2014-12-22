@@ -1,0 +1,109 @@
+<html>
+	<head>
+	<script type="text/javascript">
+		TileBuilder=function(){
+			if(arguments.length==0) return;
+			this.tilesPane=document.getElementById(arguments[0]);
+		this.h=[];//水平条位置
+		this.v=[];//垂直条位置
+		this.su=150;//定义标准块150px × 150px;
+		this.s0=[1,2,3,4,5,6,7,8];//标准布局
+		this.s1=[];//长条占位排除列表
+		this.s=[];//标准块位置		
+		this.ps=[];//tile position and size like p[0]=[top,left,width,height];
+		if(arguments.length>1){
+			params=arguments[1];
+			if(params.h)this.h=params.h;
+			if(params.v)this.v=params.v;
+			if(params.su)this.su=params.su;
+		}
+		
+		
+		var k=0;
+		var t=0,l=0,width=0;height=0;
+		//计算水平条位置和大小
+		width=this.su*2;height=this.su;
+		for(i=0;i<this.h.length;i++) {   
+			var n=this.h[i];
+	     this.s1.push(n);   
+	     this.s1.push(n+1);  
+	     if(n<5){
+	     	t=0;
+	     	l=(n-1)*this.su;
+	     }else{
+	    	t=this.su;
+	     	l=(n-5)*this.su;
+	     }	     
+	     this.ps.push([t,l,width,height]);
+		}
+		//计算垂直条位置和大小
+		width=this.su;height=this.su*2;
+		for(i=0;i<this.v.length;i++) {   
+			var n=this.v[i];
+	     this.s1.push(n);   
+	     this.s1.push(n+4);  
+	     t=0;
+	     l=(n-1)*this.su;
+	     
+	     this.ps.push([t,l,width,height]);
+		}
+		document.write("s1= "+this.s1);
+		for(i=0;i<this.s0.length;i++) { 
+			var without=false;			
+			for(j=0;j<this.s1.length;j++) { 
+				if(this.s0[i]==this.s1[j]) {without=true;this.s1.splice(j,1);break;}
+			}
+			if(!without)this.s.push(this.s0[i]);
+		}
+		//计算标准块位置和大小
+		width=this.su;height=this.su;
+		for(i=0;i<this.s.length;i++) {   
+			var n=this.s[i];
+		     if(n<5){
+		     	t=0;
+		     	l=(n-1)*this.su;
+		     }else{
+		    	t=this.su;
+		     	l=(n-5)*this.su;
+		     }
+	     this.ps.push([t,l,width,height]);
+		}
+		
+//		document.write("<hr>");
+		document.write("s= "+this.s);
+		document.write("<hr>");
+		document.write(this.ps);
+		this.build=function(){
+			//var tilesPane=document.getElementById("tilesPane");
+			var tiles="";
+			for(i=0;i<this.ps.length;i++){			
+				tiles+="<div style='border:1px solid white;position:absolute;"+setPosition(this.ps[i])+"'>"+(i+1)+"</div>";		;
+			}
+			this.tilesPane.innerHTML=tiles;
+		};
+	}
+		
+		function setPosition(arr){
+			r= "top:"+arr[0]+"px;left:"+arr[1]+"px;width:"+arr[2]+"px;height:"+arr[3]+"px;";
+			/*
+			document.write("<hr>");
+			document.write(r);
+			*/
+			return r;
+		}
+		
+	</script>	
+	</head>
+	<body>
+		<div id="tilesPane" style="position:relative;border:0px solid gray;background:#DC8E9D;width:600px;height:300px;"></div>
+		<div id="tilesPane1" style="position:relative;border:0px solid gray;background:#6F87C7;width:600px;height:300px;"></div>
+		<div id="tilesPane2" style="position:relative;border:0px solid gray;background:#998673;width:600px;height:300px;"></div>
+		
+	<script type="text/javascript">
+		new TileBuilder("tilesPane").build();
+		new TileBuilder("tilesPane1",{h:[1],v:[3,4]}).build();
+		new TileBuilder("tilesPane2",{h:[5,3],su:100}).build();
+	</script>	
+	
+	</body>
+</html>
